@@ -39,8 +39,17 @@ class Chef
         recursive true
       end
 
+      http_proxy = new_resource.http_proxy
+      proxy_args = ''
+
+      Chef::Log.debug "Using proxy: #{http_proxy || 'none'}"
+
+      if http_proxy and http_proxy =~ /^(?:http:\/\/)?([^:]+)(?::(\d+))?$/
+        proxy_args = "-DproxyHost=#{$1} -DproxyPort=#{$2||'8080'} "
+      end
+
       # automatically raises on error, logs command output
-      shell_out!("#{new_resource.bindir}/plugin -install #{name}#{version}#{url}".split(' '))
+      shell_out!("#{new_resource.bindir}/plugin #{proxy_args}-install #{name}#{version}#{url}".split(' '))
 
       # Ensure proper permissions
       shell_out!("chown -R #{new_resource.user}:#{new_resource.group} #{new_resource.plugin_dir}".split(' '))

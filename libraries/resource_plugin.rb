@@ -19,5 +19,6 @@ class Chef
     attribute(:user, kind_of: String, default: 'elasticsearch')
     attribute(:group, kind_of: String, default: 'elasticsearch')
 
+    attribute(:http_proxy, kind_of: String, default: ENV['http_proxy'])
   end
 end
